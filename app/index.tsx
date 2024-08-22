@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet } from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
@@ -31,7 +31,7 @@ export default function HomeScreen() {
       id: 2,
       title: "Mistery gift",
       description:
-      "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
+        "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
       emoji: "🎁",
       favorite: true,
       color: "#F7D44C",
@@ -40,23 +40,22 @@ export default function HomeScreen() {
       id: 3,
       title: "Money or scratch",
       description:
-      "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
+        "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
       emoji: "🤑💵💰",
       favorite: false,
       color: "#A8D672",
     },
   ]);
 
-  function updateFavoriteStatus(id : number, favorite : boolean) {
+  function updateFavoriteStatus(id: number, favorite: boolean) {
     // Create a new array with the updated favorite status
-    const updatedData = data.map(item => 
+    const updatedData = data.map((item) =>
       item.id === id ? { ...item, favorite: favorite } : item
     );
-    
+
     // Update the state with the new array
     setData(updatedData);
   }
-  
 
   useEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -101,8 +100,8 @@ export default function HomeScreen() {
                   favorite={item.favorite}
                   color={item.color}
                   favoriteHandler={updateFavoriteStatus}
-                  />
-                ))}
+                />
+              ))}
           </View>
           <View style={styles.cardRow}>
             {data
@@ -122,10 +121,13 @@ export default function HomeScreen() {
           </View>
         </View>
       </ScrollView>
+
       <Text style={styles.createBtnContainer}>
-        <View style={styles.createBtn}>
-          <Text style={styles.createBtnText}>+</Text>
-        </View>
+        <TouchableOpacity onPress={() => {}}>
+          <View style={styles.createBtn}>
+            <Text style={styles.createBtnText}>+</Text>
+          </View>
+        </TouchableOpacity>
       </Text>
     </View>
   );
@@ -149,7 +151,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   createBtn: {
-    backgroundColor: "black",
+    backgroundColor: "rgba(0,0,0,0.5)",
     position: "relative",
     left: "-50%",
     width: 70,
