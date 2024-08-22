@@ -1,21 +1,44 @@
 import * as React from "react";
 import { Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
+import { useRouter } from "expo-router";
+import { CardController } from "@/services/cardController";
+import { Card } from "@/types";
+import { Entypo } from "@expo/vector-icons";
 
-export default function DetailScreen() {
+export default function CreateScreen() {
+  const router = useRouter();
   function handleScratch(scratchPercentage: number) {
     console.log(scratchPercentage);
   }
 
+  const handleNavigation = () => {
+    router.push(`/`);
+  };
+
   const Favorite = require("../assets/images/favorite.png");
   const FilledFavorite = require("../assets/images/filled-favorite.png");
+
+  const addCard = async () => {
+    console.log("CREATING CARD");
+    const newCard: Omit<Card, "id"> = {
+      title: "New Card",
+      description: "This is a new card",
+      favorite: false,
+      color: "#ffcc00",
+    };
+
+    await CardController.createCard(newCard).then(() => {
+      handleNavigation();
+    });
+  };
 
   return (
     <View style={[styles.container]}>
       <View style={[styles.options]}>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={handleNavigation}>
           <Text style={styles.optionBtn}>
-            <Image style={styles.optionImg} source={FilledFavorite}></Image>
+            <Entypo name="chevron-thin-left" size={22} color="white" />
           </Text>
         </TouchableOpacity>
       </View>
@@ -133,7 +156,7 @@ export default function DetailScreen() {
       </View>
 
       <Text style={styles.createBtnContainer}>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={addCard}>
           <View style={styles.createBtn}>
             <Text style={styles.createBtnText}>+</Text>
           </View>

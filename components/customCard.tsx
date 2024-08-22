@@ -2,7 +2,7 @@ import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { useEffect, useState } from "react";
 import { Card } from "@/types"; // Import the Card interface
-import { CardController } from "@/services/cardController";
+import { useRouter } from "expo-router";
 
 interface CardProps extends Card {
   onFavoritePress(id: number): void;
@@ -19,6 +19,8 @@ export function CustomCard({
 }: CardProps) {
   const Favorite = require("../assets/images/favorite.png");
   const FilledFavorite = require("../assets/images/filled-favorite.png");
+
+  const router = useRouter();
 
   const [rnd, setRnd] = useState<number>();
 
@@ -45,7 +47,11 @@ export function CustomCard({
   };
 
   const handleFavorite = async () => {
-    onFavoritePress(id)
+    onFavoritePress(id);
+  };
+
+  const handleNavigation = () => {
+    router.push(`/card/${id}`);
   };
 
   useEffect(() => {
@@ -53,7 +59,7 @@ export function CustomCard({
   }, []);
 
   return (
-    <TouchableOpacity onPress={() => {}}>
+    <TouchableOpacity onPress={handleNavigation}>
       <View
         style={[
           styles.cardContainer,

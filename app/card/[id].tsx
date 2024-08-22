@@ -1,27 +1,45 @@
 import * as React from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Card } from "@/types";
 import { CardController } from "@/services/cardController";
+import Entypo from "@expo/vector-icons/Entypo";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 
 export default function DetailScreen() {
   const { id } = useLocalSearchParams(); // Get the id from the URL
   const [card, setCard] = React.useState<Card>();
-  
+
+  const router = useRouter();
+
   const Favorite = require("../../assets/images/favorite.png");
   const FilledFavorite = require("../../assets/images/filled-favorite.png");
-  
+
   function handleScratch(scratchPercentage: number) {
     console.log(scratchPercentage);
   }
 
   const getCard = async () => {
     const temp = await CardController.findCardById(Number(id));
-    if(temp != null) {
+    if (temp != null) {
       setCard(temp);
     }
-  }
+  };
+
+  const handleNavigation = () => {
+    router.push(`/`);
+  };
+
+  const onFavoritePress = async () => {
+    const card = await CardController.findCardById(Number(id));
+    if (card) {
+      const updatedCard = { ...card, favorite: !card.favorite };
+      await CardController.updateCardById(Number(id), updatedCard);
+      getCard();
+    }
+  };
 
   React.useEffect(() => {
     getCard();
@@ -30,26 +48,26 @@ export default function DetailScreen() {
   return (
     <View style={[styles.container, { backgroundColor: card?.color }]}>
       <View style={[styles.options, { backgroundColor: card?.color }]}>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={handleNavigation}>
           <Text style={styles.optionBtn}>
-            <Image
-              style={styles.optionImg}
-              source={card?.favorite ? FilledFavorite : Favorite}
-            ></Image>
+            <Entypo name="chevron-thin-left" size={22} color="black" />
           </Text>
         </TouchableOpacity>
 
         <Text>
           <TouchableOpacity onPress={() => {}}>
             <Text style={styles.optionBtn}>
-              <Image
-                style={styles.optionImg}
-                source={card?.favorite ? FilledFavorite : Favorite}
-              ></Image>
+              <SimpleLineIcons name="trash" size={20} color="black" />
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => {}}>
+            <Text style={styles.optionBtn}>
+              <AntDesign name="edit" size={24} color="black" />
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={onFavoritePress}>
             <Text style={styles.optionBtn}>
               <Image
                 style={styles.optionImg}

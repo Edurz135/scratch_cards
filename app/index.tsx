@@ -1,34 +1,20 @@
 import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-
-import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
-import Colors from "@/constants/Colors";
-import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
 import { Card } from "@/types";
 import { CustomCard } from "@/components/customCard";
 import { CardController } from "@/services/cardController";
+import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const [cards, setCards] = useState<Card[]>([]);
+
+  const router = useRouter();
 
   const loadCards = async () => {
     const allCards = await CardController.listCards();
     console.log(await CardController.listCards());
     setCards(allCards);
-  };
-
-  const addCard = async () => {
-    console.log("CREATING CARD");
-    const newCard: Omit<Card, "id"> = {
-      title: "New Card",
-      description: "This is a new card",
-      favorite: false,
-      color: "#ffcc00",
-    };
-
-    await CardController.createCard(newCard);
-    await loadCards();
   };
   
   const onFavoritePress = async (id : number) => {
@@ -39,9 +25,14 @@ export default function HomeScreen() {
       await loadCards();
     }
   };
+  
+  const handleNavigation = () => {
+    router.push(`/create`);
+  };
+
 
   useEffect(() => {
-    CardController.resetCardController();
+    // CardController.resetCardController();
     loadCards();
   }, []);
 
@@ -89,7 +80,7 @@ export default function HomeScreen() {
       </ScrollView>
 
       <Text style={styles.createBtnContainer}>
-        <TouchableOpacity onPress={addCard}>
+        <TouchableOpacity onPress={handleNavigation}>
           <View style={styles.createBtn}>
             <Text style={styles.createBtnText}>+</Text>
           </View>
