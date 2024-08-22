@@ -5,61 +5,45 @@ import { Text, View } from "@/components/Themed";
 import Colors from "@/constants/Colors";
 import { useNavigation } from "expo-router";
 import { useEffect, useState } from "react";
-import { Card } from "@/components/Card";
-
-interface CardProps {
-  title: string;
-  description?: string;
-  emoji?: string;
-  favorite: boolean;
-}
+import { Card } from "@/types";
+import { CustomCard } from "@/components/customCard";
+import { CardController } from "@/services/cardController";
 
 export default function HomeScreen() {
-  const navigation = useNavigation();
+  const [cards, setCards] = useState<Card[]>([]);
 
-  const [data, setData] = useState([
-    {
-      id: 1,
-      title: "Plan for a day",
-      description:
-        "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
-      emoji: "",
+  const loadCards = async () => {
+    const allCards = await CardController.listCards();
+    console.log(await CardController.listCards());
+    setCards(allCards);
+  };
+
+  const addCard = async () => {
+    console.log("CREATING CARD");
+    const newCard: Omit<Card, "id"> = {
+      title: "New Card",
+      description: "This is a new card",
       favorite: false,
-      color: "#EB7A53",
-    },
-    {
-      id: 2,
-      title: "Mistery gift",
-      description:
-        "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
-      emoji: "🎁",
-      favorite: true,
-      color: "#F7D44C",
-    },
-    {
-      id: 3,
-      title: "Money or scratch",
-      description:
-        "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
-      emoji: "🤑💵💰",
-      favorite: false,
-      color: "#A8D672",
-    },
-  ]);
+      color: "#ffcc00",
+    };
 
-  function updateFavoriteStatus(id: number, favorite: boolean) {
-    // Create a new array with the updated favorite status
-    const updatedData = data.map((item) =>
-      item.id === id ? { ...item, favorite: favorite } : item
-    );
-
-    // Update the state with the new array
-    setData(updatedData);
-  }
+    await CardController.createCard(newCard);
+    await loadCards();
+  };
+  
+  const onFavoritePress = async (id : number) => {
+    const card = await CardController.findCardById(id);
+    if (card) {
+      const updatedCard = { ...card, favorite: !card.favorite };
+      await CardController.updateCardById(id, updatedCard);
+      await loadCards();
+    }
+  };
 
   useEffect(() => {
-    navigation.setOptions({ headerShown: false });
-  }, [navigation]);
+    CardController.resetCardController();
+    loadCards();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -88,42 +72,24 @@ export default function HomeScreen() {
 
         <View style={styles.cardContainer}>
           <View style={styles.cardRow}>
-            {data
+            {cards
               .filter((_, index) => index % 2 === 0)
               .map((item) => (
-                <Card
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  description={item.description}
-                  emoji={item.emoji}
-                  favorite={item.favorite}
-                  color={item.color}
-                  favoriteHandler={updateFavoriteStatus}
-                />
+                <CustomCard key={item.id} {...item} onFavoritePress={onFavoritePress} />
               ))}
           </View>
           <View style={styles.cardRow}>
-            {data
+            {cards
               .filter((_, index) => index % 2 === 1)
               .map((item) => (
-                <Card
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  description={item.description}
-                  emoji={item.emoji}
-                  favorite={item.favorite}
-                  color={item.color}
-                  favoriteHandler={updateFavoriteStatus}
-                />
+                <CustomCard key={item.id} {...item} onFavoritePress={onFavoritePress} />
               ))}
           </View>
         </View>
       </ScrollView>
 
       <Text style={styles.createBtnContainer}>
-        <TouchableOpacity onPress={() => {}}>
+        <TouchableOpacity onPress={addCard}>
           <View style={styles.createBtn}>
             <Text style={styles.createBtnText}>+</Text>
           </View>

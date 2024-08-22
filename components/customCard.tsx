@@ -1,25 +1,21 @@
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
 import { useEffect, useState } from "react";
+import { Card } from "@/types"; // Import the Card interface
+import { CardController } from "@/services/cardController";
 
-interface CardProps {
-  id: number;
-  title: string;
-  description: string;
-  emoji: string;
-  favorite: boolean;
-  color: string;
-  favoriteHandler: Function;
+interface CardProps extends Card {
+  onFavoritePress(id: number): void;
 }
 
-export function Card({
+export function CustomCard({
   id,
   title,
   description,
   emoji,
   favorite,
   color,
-  favoriteHandler,
+  onFavoritePress,
 }: CardProps) {
   const Favorite = require("../assets/images/favorite.png");
   const FilledFavorite = require("../assets/images/filled-favorite.png");
@@ -48,8 +44,8 @@ export function Card({
     }
   };
 
-  const onFavoritePress = () => {
-    favoriteHandler(id, !favorite);
+  const handleFavorite = async () => {
+    onFavoritePress(id)
   };
 
   useEffect(() => {
@@ -58,10 +54,16 @@ export function Card({
 
   return (
     <TouchableOpacity onPress={() => {}}>
-      <View style={[styles.cardContainer, getRandomBorderStyle(), {backgroundColor: color}]}>
-        <View style={[styles.header, {backgroundColor: color}]}>
+      <View
+        style={[
+          styles.cardContainer,
+          getRandomBorderStyle(),
+          { backgroundColor: color },
+        ]}
+      >
+        <View style={[styles.header, { backgroundColor: color }]}>
           <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity onPress={onFavoritePress}>
+          <TouchableOpacity onPress={handleFavorite}>
             <Text style={styles.favorite}>
               <Image
                 style={styles.favoriteImg}
@@ -71,9 +73,11 @@ export function Card({
           </TouchableOpacity>
         </View>
         <Text style={styles.description}>
-          {description.split(" ").length > 7
-            ? description.split(" ").slice(0, 7).join(" ") + "..."
-            : description}
+          {description
+            ? description.split(" ").length > 7
+              ? description.split(" ").slice(0, 7).join(" ") + "..."
+              : description
+            : ""}
         </Text>
         <Text style={styles.emoji}>{emoji}</Text>
       </View>

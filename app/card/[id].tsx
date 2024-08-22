@@ -1,33 +1,40 @@
 import * as React from "react";
 import { Image, StyleSheet, TouchableOpacity } from "react-native";
 import { Text, View } from "@/components/Themed";
+import { useLocalSearchParams } from "expo-router";
+import { Card } from "@/types";
+import { CardController } from "@/services/cardController";
 
 export default function DetailScreen() {
-  const data = {
-    id: 1,
-    title: "Plan for a day",
-    description:
-      "A mysterious secret is here, from an unforgettable adventure to a crude and terrible experience.",
-    emoji: "",
-    favorite: false,
-    color: "#EB7A53",
-  };
-
+  const { id } = useLocalSearchParams(); // Get the id from the URL
+  const [card, setCard] = React.useState<Card>();
+  
+  const Favorite = require("../../assets/images/favorite.png");
+  const FilledFavorite = require("../../assets/images/filled-favorite.png");
+  
   function handleScratch(scratchPercentage: number) {
     console.log(scratchPercentage);
   }
 
-  const Favorite = require("../../assets/images/favorite.png");
-  const FilledFavorite = require("../../assets/images/filled-favorite.png");
+  const getCard = async () => {
+    const temp = await CardController.findCardById(Number(id));
+    if(temp != null) {
+      setCard(temp);
+    }
+  }
+
+  React.useEffect(() => {
+    getCard();
+  }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: data.color }]}>
-      <View style={[styles.options, { backgroundColor: data.color }]}>
+    <View style={[styles.container, { backgroundColor: card?.color }]}>
+      <View style={[styles.options, { backgroundColor: card?.color }]}>
         <TouchableOpacity onPress={() => {}}>
           <Text style={styles.optionBtn}>
             <Image
               style={styles.optionImg}
-              source={data.favorite ? FilledFavorite : Favorite}
+              source={card?.favorite ? FilledFavorite : Favorite}
             ></Image>
           </Text>
         </TouchableOpacity>
@@ -37,7 +44,7 @@ export default function DetailScreen() {
             <Text style={styles.optionBtn}>
               <Image
                 style={styles.optionImg}
-                source={data.favorite ? FilledFavorite : Favorite}
+                source={card?.favorite ? FilledFavorite : Favorite}
               ></Image>
             </Text>
           </TouchableOpacity>
@@ -46,7 +53,7 @@ export default function DetailScreen() {
             <Text style={styles.optionBtn}>
               <Image
                 style={styles.optionImg}
-                source={data.favorite ? FilledFavorite : Favorite}
+                source={card?.favorite ? FilledFavorite : Favorite}
               ></Image>
             </Text>
           </TouchableOpacity>
@@ -54,7 +61,7 @@ export default function DetailScreen() {
       </View>
 
       <Text style={styles.titleContainer}>
-        <Text style={styles.title}>{data.title}</Text>
+        <Text style={styles.title}>{card?.title}</Text>
       </Text>
 
       <Text style={styles.scratchContainer}>
@@ -69,7 +76,7 @@ export default function DetailScreen() {
       </Text>
 
       <Text style={styles.description}>
-        <Text>{data.description}</Text>
+        <Text>{card?.description}</Text>
       </Text>
     </View>
   );

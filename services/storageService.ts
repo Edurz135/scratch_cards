@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Define a generic type for our service
 class StorageService<T> {
@@ -14,7 +14,7 @@ class StorageService<T> {
       const jsonValue = JSON.stringify(data);
       await AsyncStorage.setItem(this.storageKey, jsonValue);
     } catch (e) {
-      console.error('Failed to save data:', e);
+      console.error("Failed to save data:", e);
     }
   }
 
@@ -24,7 +24,7 @@ class StorageService<T> {
       const jsonValue = await AsyncStorage.getItem(this.storageKey);
       return jsonValue != null ? JSON.parse(jsonValue) : null;
     } catch (e) {
-      console.error('Failed to load data:', e);
+      console.error("Failed to load data:", e);
       return null;
     }
   }
@@ -34,8 +34,20 @@ class StorageService<T> {
     try {
       await AsyncStorage.removeItem(this.storageKey);
     } catch (e) {
-      console.error('Failed to remove data:', e);
+      console.error("Failed to remove data:", e);
     }
+  }
+
+  async getCounter(counterKey: string): Promise<number> {
+    const counter = await AsyncStorage.getItem(counterKey);
+    return counter ? parseInt(counter, 10) : 0;
+  }
+
+  async incrementCounter(counterKey: string): Promise<number> {
+    const currentCounter = await this.getCounter(counterKey);
+    const newCounter = currentCounter + 1;
+    await AsyncStorage.setItem(counterKey, newCounter.toString());
+    return newCounter;
   }
 }
 
