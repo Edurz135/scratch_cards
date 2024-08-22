@@ -8,13 +8,17 @@ import { Entypo } from "@expo/vector-icons";
 
 export default function CreateScreen() {
   const router = useRouter();
-  function handleScratch(scratchPercentage: number) {
-    console.log(scratchPercentage);
-  }
+
+  // State to hold the input values
+  const [title, setTitle] = React.useState("");
+  const [description, setDescription] = React.useState("");
+  const [selectedColor, setSelectedColor] = React.useState<number>(0);
 
   const handleNavigation = () => {
     router.push(`/`);
   };
+
+  const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
 
   const Favorite = require("../assets/images/favorite.png");
   const FilledFavorite = require("../assets/images/filled-favorite.png");
@@ -22,10 +26,10 @@ export default function CreateScreen() {
   const addCard = async () => {
     console.log("CREATING CARD");
     const newCard: Omit<Card, "id"> = {
-      title: "New Card",
-      description: "This is a new card",
+      title: title.trim(),
+      description: description.trim(),
       favorite: false,
-      color: "#ffcc00",
+      color: colors[selectedColor],
     };
 
     await CardController.createCard(newCard).then(() => {
@@ -52,7 +56,8 @@ export default function CreateScreen() {
         <TextInput
           style={styles.input}
           placeholder="Your scratch card title."
-          onChangeText={(value) => {}}
+          onChangeText={(value) => setTitle(value.slice(0, 20))} // Limiting to 20 characters
+          value={title}
         />
       </View>
 
@@ -61,50 +66,31 @@ export default function CreateScreen() {
         <TextInput
           style={[styles.input, { minHeight: 100 }]}
           placeholder="Your scratch card description."
-          onChangeText={(value) => {}}
+          onChangeText={(value) => setDescription(value.slice(0, 40))} // Limiting to 40 characters
+          value={description}
           multiline
         />
       </View>
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputName}>Theme</Text>
-        <Text>
-          <View
-            style={[
-              styles.theme,
-              styles.border1,
-              { backgroundColor: "#F7D44C" },
-            ]}
-          ></View>
-          <View
-            style={[
-              styles.theme,
-              styles.border1,
-              { backgroundColor: "#EB7A53" },
-            ]}
-          ></View>
-          <View
-            style={[
-              styles.theme,
-              styles.border1,
-              { backgroundColor: "#98B7DB" },
-            ]}
-          ></View>
-          <View
-            style={[
-              styles.theme,
-              styles.border1,
-              { backgroundColor: "#A8D672" },
-            ]}
-          ></View>
-          <View
-            style={[
-              styles.theme,
-              styles.border1,
-              { backgroundColor: "#F6ECC9" },
-            ]}
-          ></View>
-        </Text>
+        <View style={styles.themeContainer}>
+          {colors.map((color, idx) => {
+            const isSelected = selectedColor === idx;
+            return (
+              <TouchableOpacity
+                key={idx}
+                style={[
+                  styles.theme,
+                  { backgroundColor: color },
+                  isSelected && styles.selectedTheme,
+                  styles.border1
+                ]}
+                onPress={() => setSelectedColor(idx)}
+              />
+            );
+          })}
+        </View>
       </View>
 
       <View style={[styles.inputContainer]}>
@@ -167,6 +153,15 @@ export default function CreateScreen() {
 }
 
 const styles = StyleSheet.create({
+  themeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    backgroundColor: "black"
+  },
+  selectedTheme: {
+    borderWidth: 2,
+    borderColor: "white",
+  },
   border1: {
     borderTopStartRadius: 0,
     borderTopEndRadius: 60,
