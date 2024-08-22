@@ -32,6 +32,13 @@ export default function DetailScreen() {
     router.push(`/`);
   };
 
+  const handleDelete = async () => {
+    console.log("deleting")
+    await CardController.deleteCardById(Number(id)).then(() => {
+      router.push(`/`);
+    });
+  };
+
   const onFavoritePress = async () => {
     const card = await CardController.findCardById(Number(id));
     if (card) {
@@ -55,7 +62,7 @@ export default function DetailScreen() {
         </TouchableOpacity>
 
         <Text>
-          <TouchableOpacity onPress={() => {}}>
+          <TouchableOpacity onPress={handleDelete}>
             <Text style={styles.optionBtn}>
               <SimpleLineIcons name="trash" size={20} color="black" />
             </Text>
