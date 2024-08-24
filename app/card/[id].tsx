@@ -115,10 +115,11 @@ export default function DetailScreen() {
           <View style={styles.scratchA}>
             <ScratchCard style={styles.scratchB} image={image}>
               <View style={styles.card}>
-                <Image
+                {/* <Image
                   source={require("../../assets/images/favicon.png")}
                   style={styles.imageCard}
-                />
+                /> */}
+                <Image source={{ uri: card?.image }} style={styles.imageCard} />
                 {/* <Text style={styles.titleText}>Cashback</Text>
                 <Text style={styles.subTitleText}>$10</Text> */}
               </View>
@@ -150,13 +151,12 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    padding: 10,
+    // padding: 10,
   },
   imageCard: {
     height: "100%",
     width: "100%",
     resizeMode: "contain",
-    marginBottom: 20,
   },
   optionBtn: {
     width: 50,

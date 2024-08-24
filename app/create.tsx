@@ -13,8 +13,8 @@ import { CardController } from "@/services/cardController";
 import { Card } from "@/types";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import EmojiKeyboard from "rn-emoji-keyboard";
 import * as ImagePicker from "expo-image-picker";
-
 export default function CreateScreen() {
   const router = useRouter();
 
@@ -23,16 +23,19 @@ export default function CreateScreen() {
   const [description, setDescription] = useState("");
   const [selectedColor, setSelectedColor] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
+  const [isEmojiKeyboardOpen, setIsEmojiKeyboardOpen] = useState(false); // State to control Emoji Keyboard
 
   const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
-  
+
   const handleNavigation = () => {
     router.push(`/`);
   };
 
   const handlePhoto = async () => {
     // Ask for permission to access media library
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (permissionResult.granted === false) {
       Alert.alert("Permission to access camera roll is required!");
@@ -63,10 +66,10 @@ export default function CreateScreen() {
       Alert.alert("Validation Error", "The description cannot be empty.");
       return;
     }
-    
+
     if (selectedImage === null) {
       Alert.alert("Validation Error", "The image cannot be empty.");
-      return
+      return;
     }
 
     const newCard: Omit<Card, "id"> = {
@@ -75,11 +78,16 @@ export default function CreateScreen() {
       favorite: false,
       color: colors[selectedColor],
       image: selectedImage,
+      emoji: selectedEmoji || undefined,
     };
 
     await CardController.createCard(newCard).then(() => {
       handleNavigation();
     });
+  };
+
+  const handleEmojiPick = (emojiObject: { emoji: string }) => {
+    setSelectedEmoji(emojiObject.emoji); // Allow only one emoji
   };
 
   return (
@@ -92,11 +100,21 @@ export default function CreateScreen() {
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.titleContainer}>
+      <Text
+        style={[
+          styles.titleContainer,
+          !isEmojiKeyboardOpen ? { marginTop: 20 } : {},
+        ]}
+      >
         <Text style={styles.title}>Create</Text>
       </Text>
 
-      <View style={[styles.inputContainer, { marginTop: 32 }]}>
+      <View
+        style={[
+          styles.inputContainer,
+          !isEmojiKeyboardOpen ? { marginTop: 32 } : {},
+        ]}
+      >
         <Text style={styles.inputName}>Title</Text>
         <TextInput
           style={styles.input}
@@ -139,13 +157,52 @@ export default function CreateScreen() {
       </View>
 
       <View style={[styles.inputContainer]}>
-        <Text style={styles.inputName}>Emoji</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Your Emojis."
-          onChangeText={(value) => {}}
-        />
+        <Text style={styles.inputName}>Emoji <Text style={{fontSize: 10, color: "rgba(255,255,255,0.5)"}}>*Optional</Text></Text>
+        <TouchableOpacity onPress={() => setIsEmojiKeyboardOpen(true)}>
+          <TextInput
+            style={[styles.input, {width: 30}]}
+            placeholder="Pick up to 3 Emojis"
+            editable={false}
+            value={selectedEmoji || ""}
+          />
+        </TouchableOpacity>
       </View>
+
+      <EmojiKeyboard
+        allowMultipleSelections={false} // Allow only single selection
+        onEmojiSelected={handleEmojiPick}
+        open={isEmojiKeyboardOpen}
+        onClose={() => setIsEmojiKeyboardOpen(false)}
+        theme={{
+          backdrop: "#16161888",
+          knob: "#fff",
+          container: "#282829",
+          header: "#fff",
+          skinTonesContainer: "#252427",
+          category: {
+            icon: "#fff",
+            iconActive: "black",
+            container: "#252427",
+            containerActive: "#fff",
+          },
+          search: {
+            placeholder: "#fff",
+            text: "#fff"
+          }
+        }}
+        emojiSize={32} // Set emoji size
+        enableSearchBar
+        enableRecentlyUsed
+        customButtons={[
+          <TouchableOpacity
+            key="deleteButton"
+            onPress={() => {
+              setSelectedEmoji(null) 
+              setIsEmojiKeyboardOpen(false)}}
+            style={{display: "flex", justifyContent: "center", marginTop:20, }}
+          ><Entypo name="cross" size={26} color="white" /></TouchableOpacity>,
+        ]}
+      />
 
       <View
         style={{
@@ -164,23 +221,7 @@ export default function CreateScreen() {
           marginTop: 20,
         }}
       >
-        <TouchableOpacity
-          onPress={handlePhoto}
-          style={styles.imagePicker}
-          // style={{
-          //   backgroundColor: "black",
-          //   width: 130,
-          //   height: 130,
-          //   borderRadius: 999,
-          //   display: "flex",
-          //   alignItems: "center",
-          //   justifyContent: "center",
-
-          //   borderWidth: 1,
-          //   borderColor: "white",
-          //   borderStyle: "solid",
-          // }}
-        >
+        <TouchableOpacity onPress={handlePhoto} style={styles.imagePicker}>
           {selectedImage ? (
             <Image source={{ uri: selectedImage }} style={styles.image} />
           ) : (
@@ -355,7 +396,6 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     paddingLeft: 20,
-    marginTop: 30,
     display: "flex",
     flexDirection: "column",
   },
