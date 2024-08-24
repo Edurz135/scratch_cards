@@ -13,12 +13,19 @@ import { useRouter } from "expo-router";
 
 export default function HomeScreen() {
   const [cards, setCards] = useState<Card[]>([]);
+  const [selectedOption, setSelectedOption] = useState<"all" | "favorites">(
+    "all"
+  );
 
   const router = useRouter();
 
+  const filteredCards =
+    selectedOption === "favorites"
+      ? cards.filter((card) => card.favorite)
+      : cards;
+
   const loadCards = async () => {
     const allCards = await CardController.listCards();
-    console.log(await CardController.listCards());
     setCards(allCards);
   };
 
@@ -51,7 +58,7 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.optionsContainer}>
-          <View>
+          {/* <View>
             <View style={styles.option}>
               <View style={styles.optionTitle}>
                 <Text
@@ -78,12 +85,45 @@ export default function HomeScreen() {
                 <Text style={{ fontSize: 12, color: "white" }}>3</Text>
               </View>
             </View>
-          </View>
+          </View> */}
+          <TouchableOpacity onPress={() => setSelectedOption("all")}>
+            <View
+              style={[
+                styles.option,
+                selectedOption === "all" && styles.selectedOption,
+              ]}
+            >
+              <View style={styles.optionTitle}>
+                <Text style={styles.optionText}>All</Text>
+              </View>
+              <View style={styles.optionQuantity}>
+                <Text style={styles.optionQuantityText}>{cards.length}</Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => setSelectedOption("favorites")}>
+            <View
+              style={[
+                styles.option,
+                selectedOption === "favorites" && styles.selectedOption,
+              ]}
+            >
+              <View style={styles.optionTitle}>
+                <Text style={styles.optionText}>Favorites</Text>
+              </View>
+              <View style={styles.optionQuantity}>
+                <Text style={styles.optionQuantityText}>
+                  {cards.filter((card) => card.favorite).length}
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.cardContainer}>
           <View style={styles.cardRow}>
-            {cards
+            {filteredCards
               .filter((_, index) => index % 2 === 0)
               .map((item) => (
                 <CustomCard
@@ -94,7 +134,7 @@ export default function HomeScreen() {
               ))}
           </View>
           <View style={styles.cardRow}>
-            {cards
+            {filteredCards
               .filter((_, index) => index % 2 === 1)
               .map((item) => (
                 <CustomCard
@@ -119,6 +159,18 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  optionText: {
+    fontSize: 20,
+    fontFamily: "Numans",
+    color: "white",
+  },
+  optionQuantityText: {
+    fontSize: 12,
+    color: "white",
+  },
+  selectedOption: {
+    opacity: 1,
+  },
   createBtnText: {
     fontSize: 20,
     fontFamily: "Numans",
@@ -178,6 +230,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "white",
+    opacity: 0.5,
     borderRadius: 999,
     paddingHorizontal: 10,
     paddingVertical: 10,
