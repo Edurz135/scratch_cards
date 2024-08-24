@@ -5,4 +5,5 @@ export interface Card {
   favorite: boolean;
   color: string;
   emoji?: string;
+  image: string;
 }

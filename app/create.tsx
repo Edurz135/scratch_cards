@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -6,30 +6,51 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { CardController } from "@/services/cardController";
 import { Card } from "@/types";
 import { Entypo } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import * as ImagePicker from "expo-image-picker";
 
 export default function CreateScreen() {
   const router = useRouter();
 
   // State to hold the input values
-  const [title, setTitle] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [selectedColor, setSelectedColor] = React.useState<number>(0);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [selectedColor, setSelectedColor] = useState<number>(0);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
+  
   const handleNavigation = () => {
     router.push(`/`);
   };
 
-  const showAlert = () => {
-    Alert.alert("Validation Error", "The title cannot be empty.");
-  };
+  const handlePhoto = async () => {
+    // Ask for permission to access media library
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-  const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
+    if (permissionResult.granted === false) {
+      Alert.alert("Permission to access camera roll is required!");
+      return;
+    }
+
+    // Launch the image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [3, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri); // Save the selected image URI
+    }
+  };
 
   const addCard = async () => {
     // Validation checks
@@ -42,12 +63,18 @@ export default function CreateScreen() {
       Alert.alert("Validation Error", "The description cannot be empty.");
       return;
     }
+    
+    if (selectedImage === null) {
+      Alert.alert("Validation Error", "The image cannot be empty.");
+      return
+    }
 
     const newCard: Omit<Card, "id"> = {
       title: title.trim(),
       description: description.trim(),
       favorite: false,
       color: colors[selectedColor],
+      image: selectedImage,
     };
 
     await CardController.createCard(newCard).then(() => {
@@ -138,21 +165,27 @@ export default function CreateScreen() {
         }}
       >
         <TouchableOpacity
-          style={{
-            backgroundColor: "black",
-            width: 130,
-            height: 130,
-            borderRadius: 999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+          onPress={handlePhoto}
+          style={styles.imagePicker}
+          // style={{
+          //   backgroundColor: "black",
+          //   width: 130,
+          //   height: 130,
+          //   borderRadius: 999,
+          //   display: "flex",
+          //   alignItems: "center",
+          //   justifyContent: "center",
 
-            borderWidth: 1,
-            borderColor: "white",
-            borderStyle: "solid",
-          }}
+          //   borderWidth: 1,
+          //   borderColor: "white",
+          //   borderStyle: "solid",
+          // }}
         >
-          <Text style={{ color: "white", fontSize: 20 }}>+</Text>
+          {selectedImage ? (
+            <Image source={{ uri: selectedImage }} style={styles.image} />
+          ) : (
+            <Text style={styles.imagePickerText}>+</Text>
+          )}
         </TouchableOpacity>
       </View>
 
@@ -170,6 +203,30 @@ export default function CreateScreen() {
 }
 
 const styles = StyleSheet.create({
+  imagePickerContainer: {
+    alignItems: "center",
+    marginTop: 20,
+  },
+  imagePicker: {
+    backgroundColor: "black",
+    width: 130,
+    height: 130,
+    borderRadius: 999,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: "white",
+  },
+  imagePickerText: {
+    color: "white",
+    fontSize: 20,
+  },
+  image: {
+    width: 130,
+    height: 130,
+    borderRadius: 999,
+  },
   themeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
