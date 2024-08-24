@@ -1,5 +1,4 @@
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/Themed";
+import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import { Card } from "@/types"; // Import the Card interface
 import { useRouter } from "expo-router";
@@ -67,15 +66,17 @@ export function CustomCard({
           { backgroundColor: color },
         ]}
       >
-        <View style={[styles.header, { backgroundColor: color }]}>
-          <Text style={styles.title}>{title}</Text>
+        <View style={[styles.header]}>
+          <View>
+            <Text style={styles.title}>{title}</Text>
+          </View>
           <TouchableOpacity onPress={handleFavorite}>
-            <Text style={styles.favorite}>
+            <View style={styles.favorite}>
               <Image
                 style={styles.favoriteImg}
                 source={favorite ? FilledFavorite : Favorite}
               ></Image>
-            </Text>
+            </View>
           </TouchableOpacity>
         </View>
         <Text style={styles.description}>
@@ -100,11 +101,9 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "white",
     alignItems: "center",
   },
   favorite: {
-    minWidth: 50,
     width: 50,
     height: 50,
     backgroundColor: "rgba(0,0,0,0.15)",
@@ -118,14 +117,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   description: {
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: "Numans",
     textAlign: "justify",
+    color: "black",
   },
   title: {
-    fontSize: 22,
-    lineHeight: 20,
+    fontSize: 20,
     fontFamily: "Numans",
+    color: "black",
   },
   cardContainer: {
     display: "flex",

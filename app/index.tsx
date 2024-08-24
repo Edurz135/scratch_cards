@@ -1,5 +1,10 @@
-import { ScrollView, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/Themed";
+import {
+  Text,
+  View,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+} from "react-native";
 import { useEffect, useState } from "react";
 import { Card } from "@/types";
 import { CustomCard } from "@/components/customCard";
@@ -16,8 +21,8 @@ export default function HomeScreen() {
     console.log(await CardController.listCards());
     setCards(allCards);
   };
-  
-  const onFavoritePress = async (id : number) => {
+
+  const onFavoritePress = async (id: number) => {
     const card = await CardController.findCardById(id);
     if (card) {
       const updatedCard = { ...card, favorite: !card.favorite };
@@ -25,11 +30,10 @@ export default function HomeScreen() {
       await loadCards();
     }
   };
-  
+
   const handleNavigation = () => {
     router.push(`/create`);
   };
-
 
   useEffect(() => {
     // CardController.resetCardController();
@@ -41,24 +45,40 @@ export default function HomeScreen() {
       <ScrollView>
         <View style={styles.options}></View>
 
-        <Text style={styles.titleContainer}>
+        <View style={styles.titleContainer}>
           <Text style={styles.title}>My</Text>
           <Text style={styles.title}>Cards</Text>
-        </Text>
+        </View>
 
         <View style={styles.optionsContainer}>
-          <Text>
-            <Text style={styles.option}>
-              <Text style={styles.optionTitle}>All</Text>
-              <Text style={styles.optionQuantity}>10</Text>
-            </Text>
-          </Text>
-          <Text>
-            <Text style={styles.option}>
-              <Text style={styles.optionTitle}>Favorites</Text>
-              <Text style={styles.optionQuantity}>3</Text>
-            </Text>
-          </Text>
+          <View>
+            <View style={styles.option}>
+              <View style={styles.optionTitle}>
+                <Text
+                  style={{ fontSize: 20, fontFamily: "Numans", color: "white" }}
+                >
+                  All
+                </Text>
+              </View>
+              <View style={styles.optionQuantity}>
+                <Text style={{ fontSize: 12, color: "white" }}>10</Text>
+              </View>
+            </View>
+          </View>
+          <View>
+            <View style={styles.option}>
+              <View style={styles.optionTitle}>
+                <Text
+                  style={{ fontSize: 20, fontFamily: "Numans", color: "white" }}
+                >
+                  Favorites
+                </Text>
+              </View>
+              <View style={styles.optionQuantity}>
+                <Text style={{ fontSize: 12, color: "white" }}>3</Text>
+              </View>
+            </View>
+          </View>
         </View>
 
         <View style={styles.cardContainer}>
@@ -66,26 +86,34 @@ export default function HomeScreen() {
             {cards
               .filter((_, index) => index % 2 === 0)
               .map((item) => (
-                <CustomCard key={item.id} {...item} onFavoritePress={onFavoritePress} />
+                <CustomCard
+                  key={item.id}
+                  {...item}
+                  onFavoritePress={onFavoritePress}
+                />
               ))}
           </View>
           <View style={styles.cardRow}>
             {cards
               .filter((_, index) => index % 2 === 1)
               .map((item) => (
-                <CustomCard key={item.id} {...item} onFavoritePress={onFavoritePress} />
+                <CustomCard
+                  key={item.id}
+                  {...item}
+                  onFavoritePress={onFavoritePress}
+                />
               ))}
           </View>
         </View>
       </ScrollView>
 
-      <Text style={styles.createBtnContainer}>
-        <TouchableOpacity onPress={handleNavigation}>
-          <View style={styles.createBtn}>
-            <Text style={styles.createBtnText}>+</Text>
+      <View style={styles.createBtnContainer}>
+        <TouchableOpacity onPress={handleNavigation} style={styles.createBtn}>
+          <View style={styles.createBtnText}>
+            <Text style={{ color: "white" }}>+</Text>
           </View>
         </TouchableOpacity>
-      </Text>
+      </View>
     </View>
   );
 }
@@ -102,7 +130,6 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderStyle: "solid",
     borderWidth: 1,
-
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -110,7 +137,7 @@ const styles = StyleSheet.create({
   createBtn: {
     backgroundColor: "rgba(0,0,0,0.5)",
     position: "relative",
-    left: "-50%",
+    left: "-37%",
     width: 70,
     height: 70,
     borderRadius: 999,
@@ -123,7 +150,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: "50%",
-    display: "flex",
   },
   cardContainer: {
     display: "flex",
@@ -147,23 +173,29 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   option: {
+    display: "flex",
+    flexDirection: "row",
     borderWidth: 1,
     borderStyle: "solid",
     borderColor: "white",
     borderRadius: 999,
     paddingHorizontal: 10,
-    paddingVertical: 20,
+    paddingVertical: 10,
   },
   optionTitle: {
     color: "white",
-    fontSize: 24,
+    fontSize: 20,
     marginHorizontal: 10,
     fontFamily: "Numans",
+    display: "flex",
+    justifyContent: "center",
   },
   optionQuantity: {
-    width: 24,
-    height: 24,
-    fontSize: 12,
+    width: 35,
+    height: 35,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     paddingHorizontal: 10,
     paddingVertical: 5,
     backgroundColor: "#262626",
@@ -173,7 +205,6 @@ const styles = StyleSheet.create({
   },
   options: {
     height: 60,
-    backgroundColor: "black",
   },
   titleContainer: {
     paddingLeft: 20,

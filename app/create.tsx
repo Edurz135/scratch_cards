@@ -1,6 +1,12 @@
 import * as React from "react";
-import { Image, StyleSheet, TextInput, TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/Themed";
+import {
+  Text,
+  View,
+  Alert,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { CardController } from "@/services/cardController";
 import { Card } from "@/types";
@@ -18,13 +24,24 @@ export default function CreateScreen() {
     router.push(`/`);
   };
 
+  const showAlert = () => {
+    Alert.alert("Validation Error", "The title cannot be empty.");
+  };
+
   const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
 
-  const Favorite = require("../assets/images/favorite.png");
-  const FilledFavorite = require("../assets/images/filled-favorite.png");
-
   const addCard = async () => {
-    console.log("CREATING CARD");
+    // Validation checks
+    if (title.trim() === "") {
+      Alert.alert("Validation Error", "The title cannot be empty.");
+      return;
+    }
+
+    if (description.trim() === "") {
+      Alert.alert("Validation Error", "The description cannot be empty.");
+      return;
+    }
+
     const newCard: Omit<Card, "id"> = {
       title: title.trim(),
       description: description.trim(),
@@ -41,9 +58,9 @@ export default function CreateScreen() {
     <View style={[styles.container]}>
       <View style={[styles.options]}>
         <TouchableOpacity onPress={handleNavigation}>
-          <Text style={styles.optionBtn}>
+          <View style={styles.optionBtn}>
             <Entypo name="chevron-thin-left" size={22} color="white" />
-          </Text>
+          </View>
         </TouchableOpacity>
       </View>
 
@@ -84,7 +101,7 @@ export default function CreateScreen() {
                   styles.theme,
                   { backgroundColor: color },
                   isSelected && styles.selectedTheme,
-                  styles.border1
+                  styles.border1,
                 ]}
                 onPress={() => setSelectedColor(idx)}
               />
@@ -119,32 +136,31 @@ export default function CreateScreen() {
           marginTop: 20,
         }}
       >
-        <TouchableOpacity>
-          <Text
-            style={{
-              backgroundColor: "black",
-              width: 130,
-              height: 130,
-              borderRadius: 999,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontSize: 20,
-              borderWidth: 1,
-              borderColor: "white",
-              borderStyle: "solid",
-            }}
-          >
-            +
-          </Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "black",
+            width: 130,
+            height: 130,
+            borderRadius: 999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+
+            borderWidth: 1,
+            borderColor: "white",
+            borderStyle: "solid",
+          }}
+        >
+          <Text style={{ color: "white", fontSize: 20 }}>+</Text>
         </TouchableOpacity>
       </View>
 
       <Text style={styles.createBtnContainer}>
         <TouchableOpacity onPress={addCard}>
           <View style={styles.createBtn}>
-            <Text style={styles.createBtnText}>+</Text>
+            <View style={styles.createBtnText}>
+              <Text style={{ color: "white" }}>+</Text>
+            </View>
           </View>
         </TouchableOpacity>
       </Text>
@@ -156,7 +172,7 @@ const styles = StyleSheet.create({
   themeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    backgroundColor: "black"
+    backgroundColor: "black",
   },
   selectedTheme: {
     borderWidth: 2,
@@ -208,7 +224,6 @@ const styles = StyleSheet.create({
     borderColor: "white",
     borderStyle: "solid",
     borderWidth: 1,
-
     display: "flex",
     alignItems: "center",
     justifyContent: "center",

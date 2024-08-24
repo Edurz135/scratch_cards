@@ -1,6 +1,5 @@
 import * as React from "react";
-import { Image, StyleSheet, TouchableOpacity } from "react-native";
-import { Text, View } from "@/components/Themed";
+import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Card } from "@/types";
 import { CardController } from "@/services/cardController";
@@ -56,31 +55,31 @@ export default function DetailScreen() {
     <View style={[styles.container, { backgroundColor: card?.color }]}>
       <View style={[styles.options, { backgroundColor: card?.color }]}>
         <TouchableOpacity onPress={handleNavigation}>
-          <Text style={styles.optionBtn}>
+          <View style={styles.optionBtn}>
             <Entypo name="chevron-thin-left" size={22} color="black" />
-          </Text>
+          </View>
         </TouchableOpacity>
 
         <Text>
           <TouchableOpacity onPress={handleDelete}>
-            <Text style={styles.optionBtn}>
+            <View style={styles.optionBtn}>
               <SimpleLineIcons name="trash" size={20} color="black" />
-            </Text>
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.optionBtn}>
+            <View style={styles.optionBtn}>
               <AntDesign name="edit" size={24} color="black" />
-            </Text>
+            </View>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onFavoritePress}>
-            <Text style={styles.optionBtn}>
+            <View style={styles.optionBtn}>
               <Image
                 style={styles.optionImg}
                 source={card?.favorite ? FilledFavorite : Favorite}
               ></Image>
-            </Text>
+            </View>
           </TouchableOpacity>
         </Text>
       </View>
@@ -89,7 +88,7 @@ export default function DetailScreen() {
         <Text style={styles.title}>{card?.title}</Text>
       </Text>
 
-      <Text style={styles.scratchContainer}>
+      <View style={styles.scratchContainer}>
         <View style={styles.scratch}>
           {/* <ScratchCard
             source={require("../assets/images/filled-favorite.png")}
@@ -98,11 +97,11 @@ export default function DetailScreen() {
             style={styles.scratch_card}
           /> */}
         </View>
-      </Text>
+      </View>
 
-      <Text style={styles.description}>
-        <Text>{card?.description}</Text>
-      </Text>
+      <View>
+        <Text style={styles.description}>{card?.description}</Text>
+      </View>
     </View>
   );
 }
@@ -136,7 +135,7 @@ const styles = StyleSheet.create({
   },
   scratchContainer: {
     display: "flex",
-    justifyContent: "center",
+    alignItems: "center",
     paddingVertical: 60,
   },
   description: {
