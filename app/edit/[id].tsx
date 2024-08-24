@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { CardController } from "@/services/cardController";
 import { Card } from "@/types";
 import { Entypo } from "@expo/vector-icons";
@@ -17,6 +17,9 @@ import EmojiKeyboard from "rn-emoji-keyboard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 export default function CreateScreen() {
+  const { id } = useLocalSearchParams(); // Get the id from the URL
+  const [card, setCard] = React.useState<Card>();
+
   const router = useRouter();
 
   // State to hold the input values
@@ -30,9 +33,9 @@ export default function CreateScreen() {
   const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
 
   const handleNavigation = () => {
-    // router.replace(`/`);
+    // router.replace(`/card/${id}`);
     router.back();
-    // router.push(`/`);
+    // router.push(`/card/${id}`);
   };
 
   const handlePhoto = async () => {
@@ -58,7 +61,7 @@ export default function CreateScreen() {
     }
   };
 
-  const addCard = async () => {
+  const updateCard = async () => {
     // Validation checks
     if (title.trim() === "") {
       Alert.alert("Validation Error", "The title cannot be empty.");
@@ -75,16 +78,16 @@ export default function CreateScreen() {
       return;
     }
 
-    const newCard: Omit<Card, "id"> = {
+    const updatedCard: Omit<Card, "id"> = {
       title: title.trim(),
       description: description.trim(),
-      favorite: false,
+      favorite: card?.favorite || false,
       color: colors[selectedColor],
       image: selectedImage,
       emoji: selectedEmoji || undefined,
     };
 
-    await CardController.createCard(newCard).then(() => {
+    await CardController.updateCardById(Number(id), updatedCard).then(() => {
       handleNavigation();
     });
   };
@@ -92,6 +95,24 @@ export default function CreateScreen() {
   const handleEmojiPick = (emojiObject: { emoji: string }) => {
     setSelectedEmoji(emojiObject.emoji); // Allow only one emoji
   };
+
+  const getCard = async () => {
+    await CardController.findCardById(Number(id)).then((temp) => {
+      if (temp) {
+        console.log("FINDED")
+        setCard(temp);
+        setTitle(temp?.title || "");
+        setDescription(temp?.description || "");
+        setSelectedEmoji(temp?.emoji || "");
+        setSelectedColor(colors.indexOf(temp?.color || "#F7D44C") || 0);
+        setSelectedImage(temp?.image || "");
+      }
+    });
+  };
+
+  React.useEffect(() => {
+    getCard();
+  }, []);
 
   return (
     <SafeAreaView style={[styles.container]}>
@@ -109,7 +130,7 @@ export default function CreateScreen() {
           !isEmojiKeyboardOpen ? { marginTop: 20 } : {},
         ]}
       >
-        <Text style={styles.title}>Create</Text>
+        <Text style={styles.title}>Edit</Text>
       </Text>
 
       <View
@@ -242,10 +263,11 @@ export default function CreateScreen() {
       </View>
 
       <Text style={styles.createBtnContainer}>
-        <TouchableOpacity onPress={addCard}>
+        <TouchableOpacity onPress={updateCard}>
           <View style={styles.createBtn}>
             <View style={styles.createBtnText}>
               <FontAwesome name="save" size={20} color="white" />
+              {/* <Text style={{ color: "white" }}>+</Text> */}
             </View>
           </View>
         </TouchableOpacity>

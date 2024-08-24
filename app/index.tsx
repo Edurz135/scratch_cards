@@ -5,11 +5,11 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/types";
 import { CustomCard } from "@/components/customCard";
 import { CardController } from "@/services/cardController";
-import { useRouter } from "expo-router";
+import { useFocusEffect, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
@@ -43,10 +43,11 @@ export default function HomeScreen() {
     router.push(`/create`);
   };
 
-  useEffect(() => {
-    // CardController.resetCardController();
-    loadCards();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      loadCards();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.container}>

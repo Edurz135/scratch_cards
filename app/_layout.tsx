@@ -61,6 +61,12 @@ function RootLayoutNav() {
           name="card/[id]"
           options={{ headerShown: false }} // You can customize this as needed
         />
+        
+        {/* The dynamic card detail screen */}
+        <Stack.Screen
+          name="edit/[id]"
+          options={{ headerShown: false }} // You can customize this as needed
+        />
       </Stack>
     </ThemeProvider>
   );

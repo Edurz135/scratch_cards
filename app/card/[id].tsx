@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { Card } from "@/types";
 import { CardController } from "@/services/cardController";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -18,7 +18,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { ScratchCard } from "@/components/ScratchCard";
 import { useImage } from "@shopify/react-native-skia";
 
-export default function DetailScreen() {
+export default function EditScreen() {
   const { id } = useLocalSearchParams(); // Get the id from the URL
   const [card, setCard] = React.useState<Card>();
 
@@ -40,7 +40,13 @@ export default function DetailScreen() {
   };
 
   const handleNavigation = () => {
-    router.push(`/`);
+    // router.replace(`/`);
+    router.back();
+    // router.push(`/`);
+  };
+
+  const handleEdit = () => {
+    router.push(`/edit/${id}`);
   };
 
   const handleDelete = async () => {
@@ -49,17 +55,16 @@ export default function DetailScreen() {
       `Do you want to delete card "${card?.title}"?`,
       [
         {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
           text: "Yes",
           onPress: async () => {
             await CardController.deleteCardById(Number(id)).then(() => {
               router.push(`/`);
             });
           },
-        },
-
-        {
-          text: "Cancel",
-          style: "cancel",
         },
       ]
     );
@@ -74,9 +79,12 @@ export default function DetailScreen() {
     }
   };
 
-  React.useEffect(() => {
-    getCard();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      // Code to update the screen data
+      getCard();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: card?.color }]}>
@@ -91,7 +99,7 @@ export default function DetailScreen() {
               <SimpleLineIcons name="trash" size={20} color="black" />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => {}} style={styles.optionBtn}>
+            <TouchableOpacity onPress={handleEdit} style={styles.optionBtn}>
               <AntDesign name="edit" size={24} color="black" />
             </TouchableOpacity>
 
