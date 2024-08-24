@@ -11,6 +11,7 @@ import { useRouter } from "expo-router";
 import { CardController } from "@/services/cardController";
 import { Card } from "@/types";
 import { Entypo } from "@expo/vector-icons";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function CreateScreen() {
   const router = useRouter();
@@ -55,7 +56,7 @@ export default function CreateScreen() {
   };
 
   return (
-    <View style={[styles.container]}>
+    <SafeAreaView style={[styles.container]}>
       <View style={[styles.options]}>
         <TouchableOpacity onPress={handleNavigation}>
           <View style={styles.optionBtn}>
@@ -121,7 +122,7 @@ export default function CreateScreen() {
 
       <View
         style={{
-          borderBottomColor: "black",
+          borderBottomColor: "white",
           borderBottomWidth: StyleSheet.hairlineWidth,
           marginBottom: 20,
         }}
@@ -164,7 +165,7 @@ export default function CreateScreen() {
           </View>
         </TouchableOpacity>
       </Text>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -195,23 +196,22 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 20,
+    marginBottom: 15,
   },
   input: {
     color: "rgba(255,255,255,0.8)",
     borderColor: "white",
     borderWidth: 1,
     borderRadius: 20,
-    paddingVertical: 5,
-    paddingHorizontal: 10,
+    paddingHorizontal: 6,
     fontFamily: "Numans",
-    width: 260,
-    fontSize: 16,
+    width: 230,
+    fontSize: 14,
   },
   inputName: {
     fontFamily: "Numans",
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
   },
   createBtnText: {
     fontSize: 20,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     paddingLeft: 20,
-    marginTop: 35,
+    marginTop: 30,
     display: "flex",
     flexDirection: "column",
   },

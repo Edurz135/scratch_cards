@@ -45,6 +45,15 @@ export function CustomCard({
     }
   };
 
+  function getFormattedDescription(): string {
+    if (!description) return "";
+
+    if (description.length > 20) {
+      return description.substring(0, 20) + "...";
+    }
+    return description;
+  }
+
   const handleFavorite = async () => {
     onFavoritePress(id);
   };
@@ -58,54 +67,54 @@ export function CustomCard({
   }, []);
 
   return (
-    <TouchableOpacity onPress={handleNavigation}>
-      <View
-        style={[
-          styles.cardContainer,
-          getRandomBorderStyle(),
-          { backgroundColor: color },
-        ]}
-      >
-        <View style={[styles.header]}>
-          <View>
-            <Text style={styles.title}>{title}</Text>
-          </View>
-          <TouchableOpacity onPress={handleFavorite}>
-            <View style={styles.favorite}>
-              <Image
-                style={styles.favoriteImg}
-                source={favorite ? FilledFavorite : Favorite}
-              ></Image>
-            </View>
-          </TouchableOpacity>
+    <TouchableOpacity
+      onPress={handleNavigation}
+      style={[
+        styles.cardContainer,
+        getRandomBorderStyle(),
+        { backgroundColor: color },
+      ]}
+    >
+      <View style={styles.header}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{title}</Text>
         </View>
-        <Text style={styles.description}>
-          {description
-            ? description.split(" ").length > 7
-              ? description.split(" ").slice(0, 7).join(" ") + "..."
-              : description
-            : ""}
-        </Text>
-        <Text style={styles.emoji}>{emoji}</Text>
+        <TouchableOpacity onPress={handleFavorite} style={styles.favorite}>
+          <Image
+            style={styles.favoriteImg}
+            source={favorite ? FilledFavorite : Favorite}
+          ></Image>
+        </TouchableOpacity>
       </View>
+      {description ? (
+        <Text style={styles.description}>{getFormattedDescription()}</Text>
+      ) : null}
+
+      {emoji ? <Text style={styles.emoji}>{emoji}</Text> : null}
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
+  titleContainer: {
+    paddingRight: 44,
+  },
   favoriteImg: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
   },
   header: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
+    position: "relative",
+    minHeight: 40,
   },
   favorite: {
-    width: 50,
-    height: 50,
+    position: "absolute",
+    right: 0,
+    width: 44,
+    height: 44,
     backgroundColor: "rgba(0,0,0,0.15)",
     borderRadius: 999,
     display: "flex",
@@ -123,15 +132,14 @@ const styles = StyleSheet.create({
     color: "black",
   },
   title: {
-    fontSize: 20,
+    fontSize: 17,
     fontFamily: "Numans",
     color: "black",
   },
   cardContainer: {
     display: "flex",
-    flex: 1,
-    backgroundColor: "white",
-    padding: 20,
+    padding: 18,
+    paddingRight: 14,
   },
   border1: {
     borderTopStartRadius: 0,

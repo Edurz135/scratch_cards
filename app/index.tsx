@@ -10,6 +10,7 @@ import { Card } from "@/types";
 import { CustomCard } from "@/components/customCard";
 import { CardController } from "@/services/cardController";
 import { useRouter } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [cards, setCards] = useState<Card[]>([]);
@@ -48,7 +49,7 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.options}></View>
 
@@ -154,7 +155,7 @@ export default function HomeScreen() {
           </View>
         </TouchableOpacity>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -214,7 +215,6 @@ const styles = StyleSheet.create({
   cardRow: {
     display: "flex",
     flex: 1,
-    backgroundColor: "black",
     gap: 10,
   },
   optionsContainer: {

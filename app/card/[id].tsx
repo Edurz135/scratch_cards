@@ -1,11 +1,22 @@
 import * as React from "react";
-import { Text, View, Image, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Text,
+  View,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Card } from "@/types";
 import { CardController } from "@/services/cardController";
 import Entypo from "@expo/vector-icons/Entypo";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { ScratchCard } from "@/components/ScratchCard";
+import { useImage } from "@shopify/react-native-skia";
 
 export default function DetailScreen() {
   const { id } = useLocalSearchParams(); // Get the id from the URL
@@ -15,6 +26,7 @@ export default function DetailScreen() {
 
   const Favorite = require("../../assets/images/favorite.png");
   const FilledFavorite = require("../../assets/images/filled-favorite.png");
+  const image = useImage(require("../../assets/images/filled-favorite.png"));
 
   function handleScratch(scratchPercentage: number) {
     console.log(scratchPercentage);
@@ -32,10 +44,25 @@ export default function DetailScreen() {
   };
 
   const handleDelete = async () => {
-    console.log("deleting")
-    await CardController.deleteCardById(Number(id)).then(() => {
-      router.push(`/`);
-    });
+    Alert.alert(
+      "Deleting card",
+      `Do you want to delete card "${card?.title}"?`,
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            await CardController.deleteCardById(Number(id)).then(() => {
+              router.push(`/`);
+            });
+          },
+        },
+
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
   };
 
   const onFavoritePress = async () => {
@@ -52,65 +79,88 @@ export default function DetailScreen() {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: card?.color }]}>
-      <View style={[styles.options, { backgroundColor: card?.color }]}>
-        <TouchableOpacity onPress={handleNavigation}>
-          <View style={styles.optionBtn}>
+    <SafeAreaView style={[styles.container, { backgroundColor: card?.color }]}>
+      <GestureHandlerRootView>
+        <View style={[styles.options, { backgroundColor: card?.color }]}>
+          <TouchableOpacity onPress={handleNavigation} style={styles.optionBtn}>
             <Entypo name="chevron-thin-left" size={22} color="black" />
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
 
-        <Text>
-          <TouchableOpacity onPress={handleDelete}>
-            <View style={styles.optionBtn}>
+          <View style={{ display: "flex", flexDirection: "row" }}>
+            <TouchableOpacity onPress={handleDelete} style={styles.optionBtn}>
               <SimpleLineIcons name="trash" size={20} color="black" />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => {}}>
-            <View style={styles.optionBtn}>
+            <TouchableOpacity onPress={() => {}} style={styles.optionBtn}>
               <AntDesign name="edit" size={24} color="black" />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
 
-          <TouchableOpacity onPress={onFavoritePress}>
-            <View style={styles.optionBtn}>
+            <TouchableOpacity
+              onPress={onFavoritePress}
+              style={styles.optionBtn}
+            >
               <Image
                 style={styles.optionImg}
                 source={card?.favorite ? FilledFavorite : Favorite}
               ></Image>
-            </View>
-          </TouchableOpacity>
-        </Text>
-      </View>
-
-      <Text style={styles.titleContainer}>
-        <Text style={styles.title}>{card?.title}</Text>
-      </Text>
-
-      <View style={styles.scratchContainer}>
-        <View style={styles.scratch}>
-          {/* <ScratchCard
-            source={require("../assets/images/filled-favorite.png")}
-            brushWidth={50}
-            onScratch={handleScratch}
-            style={styles.scratch_card}
-          /> */}
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
 
-      <View>
-        <Text style={styles.description}>{card?.description}</Text>
-      </View>
-    </View>
+        <Text style={styles.titleContainer}>
+          <Text style={styles.title}>{card?.title}</Text>
+        </Text>
+
+        <View style={styles.scratchContainer}>
+          <View style={styles.scratchA}>
+            <ScratchCard style={styles.scratchB} image={image}>
+              <View style={styles.card}>
+                <Image
+                  source={require("../../assets/images/favicon.png")}
+                  style={styles.imageCard}
+                />
+                {/* <Text style={styles.titleText}>Cashback</Text>
+                <Text style={styles.subTitleText}>$10</Text> */}
+              </View>
+            </ScratchCard>
+          </View>
+        </View>
+
+        <View>
+          <Text style={styles.description}>{card?.description}</Text>
+        </View>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  titleText: {
+    fontSize: 18,
+    color: "black",
+    marginBottom: 6,
+  },
+  subTitleText: {
+    fontSize: 40,
+    color: "black",
+    fontWeight: "700",
+  },
+  card: {
+    width: "100%",
+    height: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+  },
+  imageCard: {
+    height: "100%",
+    width: "100%",
+    resizeMode: "contain",
+    marginBottom: 20,
+  },
   optionBtn: {
-    // minWidth: 50,
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     backgroundColor: "rgba(0,0,0,0.15)",
     borderRadius: 999,
     display: "flex",
@@ -119,19 +169,28 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   optionImg: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
   },
   scratch_card: {
     width: 400,
     height: 400,
     backgroundColor: "transparent",
   },
-  scratch: {
-    backgroundColor: "black",
+  scratchA: {
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderRadius: 65,
+    width: 215,
+    height: 215,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  scratchB: {
+    backgroundColor: "white",
     borderRadius: 60,
-    width: 230,
-    height: 230,
+    width: 200,
+    height: 200,
   },
   scratchContainer: {
     display: "flex",
@@ -146,7 +205,7 @@ const styles = StyleSheet.create({
     fontFamily: "Numans",
   },
   options: {
-    height: 60,
+    height: 50,
     marginVertical: 10,
     backgroundColor: "black",
     display: "flex",
@@ -155,7 +214,7 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     paddingLeft: 20,
-    marginTop: 35,
+    marginTop: 28,
     display: "flex",
     flexDirection: "column",
   },
@@ -165,7 +224,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   title: {
-    fontSize: 56,
+    fontSize: 50,
     color: "black",
     fontFamily: "Numans",
   },
