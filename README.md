@@ -17,7 +17,7 @@ Versatile Use Cases: Ideal for gifts, promotional events, surprise ideas, and mo
 - Skia: Powering the rich and fluid graphics for an immersive user experience.
 
 ### 🔧 How It Works
-- Create: Choose your design elements and customize the look and feel of your scratch card.
+- Create: Customize the look and feel of your scratch card.
 - Reveal: Scratch the card to reveal hidden surprises.
 - Share: Use your scratch card for gifts, promotions, or just to bring a smile to someone's face.
 
