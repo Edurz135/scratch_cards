@@ -4,9 +4,9 @@
 SCRATCH CARDS is not just an app; it's a canvas for creativity. Whether you're looking to add a personal touch to a gift, run a unique promotion, or surprise someone special, SCRATCH CARDS offers the perfect solution. With an array of customization options, you can craft scratch cards that are as unique as your imagination.
 
 ### ✨ Features
-Limitless Customization: Design scratch cards tailored to your needs with customizable colors, images, and texts.
-Instant Feedback: Reveal hidden messages or images with a simple scratch gesture.
-Versatile Use Cases: Ideal for gifts, promotional events, surprise ideas, and more!
+- Limitless Customization: Design scratch cards tailored to your needs with customizable colors, images, and texts.
+- Instant Feedback: Reveal hidden messages or images with a simple scratch gesture.
+- Versatile Use Cases: Ideal for gifts, promotional events, surprise ideas, and more!
 
 ![Alt text](./assets/images/d.png "Scrach Card Screens")
 
