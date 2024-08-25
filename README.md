@@ -15,7 +15,6 @@ Versatile Use Cases: Ideal for gifts, promotional events, surprise ideas, and mo
 - React Native: For seamless cross-platform development.
 - Expo: Simplifying the development process and ensuring smooth performance.
 - Skia: Powering the rich and fluid graphics for an immersive user experience.
-- Generative AI tools.
 
 ### 🔧 How It Works
 - Create: Choose your design elements and customize the look and feel of your scratch card.
