@@ -16,6 +16,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import EmojiKeyboard from "rn-emoji-keyboard";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
+import { ColorSelector } from "@/components/ColorSelector";
+import { selectableColors } from "@/utils";
+
 export default function CreateScreen() {
   const router = useRouter();
 
@@ -25,17 +28,15 @@ export default function CreateScreen() {
   const [selectedColor, setSelectedColor] = useState<number>(0);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
-  const [isEmojiKeyboardOpen, setIsEmojiKeyboardOpen] = useState(false); // State to control Emoji Keyboard
+  const [isEmojiKeyboardOpen, setIsEmojiKeyboardOpen] = useState(false);
 
-  const colors = ["#F7D44C", "#EB7A53", "#98B7DB", "#A8D672", "#F6ECC9"];
+  const colors = selectableColors;
 
-  const handleNavigation = () => {
-    // router.replace(`/`);
+  const handleBackNavigation = () => {
     router.back();
-    // router.push(`/`);
   };
 
-  const handlePhoto = async () => {
+  const handleAddPhoto = async () => {
     // Ask for permission to access media library
     const permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -54,7 +55,7 @@ export default function CreateScreen() {
     });
 
     if (!result.canceled) {
-      setSelectedImage(result.assets[0].uri); // Save the selected image URI
+      setSelectedImage(result.assets[0].uri);
     }
   };
 
@@ -85,7 +86,7 @@ export default function CreateScreen() {
     };
 
     await CardController.createCard(newCard).then(() => {
-      handleNavigation();
+      handleBackNavigation();
     });
   };
 
@@ -93,10 +94,14 @@ export default function CreateScreen() {
     setSelectedEmoji(emojiObject.emoji); // Allow only one emoji
   };
 
+  const handleColorPick = (id: number) => {
+    setSelectedColor(id);
+  };
+
   return (
     <SafeAreaView style={[styles.container]}>
       <View style={[styles.options]}>
-        <TouchableOpacity onPress={handleNavigation}>
+        <TouchableOpacity onPress={handleBackNavigation}>
           <View style={styles.optionBtn}>
             <Entypo name="chevron-thin-left" size={22} color="white" />
           </View>
@@ -122,7 +127,7 @@ export default function CreateScreen() {
         <TextInput
           style={styles.input}
           placeholder="Your scratch card title."
-          onChangeText={(value) => setTitle(value.slice(0, 20))} // Limiting to 20 characters
+          onChangeText={(value) => setTitle(value.slice(0, 20))}
           value={title}
         />
       </View>
@@ -132,7 +137,7 @@ export default function CreateScreen() {
         <TextInput
           style={[styles.input, { minHeight: 100 }]}
           placeholder="Your scratch card description."
-          onChangeText={(value) => setDescription(value.slice(0, 40))} // Limiting to 40 characters
+          onChangeText={(value) => setDescription(value.slice(0, 40))}
           value={description}
           multiline
         />
@@ -140,23 +145,11 @@ export default function CreateScreen() {
 
       <View style={styles.inputContainer}>
         <Text style={styles.inputName}>Theme</Text>
-        <View style={styles.themeContainer}>
-          {colors.map((color, idx) => {
-            const isSelected = selectedColor === idx;
-            return (
-              <TouchableOpacity
-                key={idx}
-                style={[
-                  styles.theme,
-                  { backgroundColor: color },
-                  isSelected && styles.selectedTheme,
-                  styles.border1,
-                ]}
-                onPress={() => setSelectedColor(idx)}
-              />
-            );
-          })}
-        </View>
+        <ColorSelector
+          colors={colors}
+          onColorPress={handleColorPick}
+          selectedColor={selectedColor}
+        />
       </View>
 
       <View style={[styles.inputContainer]}>
@@ -177,7 +170,7 @@ export default function CreateScreen() {
       </View>
 
       <EmojiKeyboard
-        allowMultipleSelections={false} // Allow only single selection
+        allowMultipleSelections={false}
         onEmojiSelected={handleEmojiPick}
         open={isEmojiKeyboardOpen}
         onClose={() => setIsEmojiKeyboardOpen(false)}
@@ -198,7 +191,7 @@ export default function CreateScreen() {
             text: "#fff",
           },
         }}
-        emojiSize={32} // Set emoji size
+        emojiSize={32}
         enableSearchBar
         enableRecentlyUsed
         customButtons={[
@@ -232,7 +225,7 @@ export default function CreateScreen() {
           marginTop: 20,
         }}
       >
-        <TouchableOpacity onPress={handlePhoto} style={styles.imagePicker}>
+        <TouchableOpacity onPress={handleAddPhoto} style={styles.imagePicker}>
           {selectedImage ? (
             <Image source={{ uri: selectedImage }} style={styles.image} />
           ) : (
@@ -278,27 +271,6 @@ const styles = StyleSheet.create({
     width: 130,
     height: 130,
     borderRadius: 999,
-  },
-  themeContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    backgroundColor: "black",
-  },
-  selectedTheme: {
-    borderWidth: 2,
-    borderColor: "white",
-  },
-  border1: {
-    borderTopStartRadius: 0,
-    borderTopEndRadius: 60,
-    borderBottomStartRadius: 60,
-    borderBottomEndRadius: 60,
-  },
-  theme: {
-    width: 35,
-    height: 31,
-    marginLeft: 5,
-    backgroundColor: "red",
   },
   inputContainer: {
     backgroundColor: "black",

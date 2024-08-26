@@ -19,7 +19,8 @@ import { ScratchCard } from "@/components/ScratchCard";
 import { useImage } from "@shopify/react-native-skia";
 
 export default function EditScreen() {
-  const { id } = useLocalSearchParams(); // Get the id from the URL
+  // Get the id from the URL
+  const { id } = useLocalSearchParams();
   const [card, setCard] = React.useState<Card>();
 
   const router = useRouter();
@@ -28,21 +29,8 @@ export default function EditScreen() {
   const FilledFavorite = require("../../assets/images/filled-favorite.png");
   const image = useImage(require("../../assets/images/filled-favorite.png"));
 
-  function handleScratch(scratchPercentage: number) {
-    console.log(scratchPercentage);
-  }
-
-  const getCard = async () => {
-    const temp = await CardController.findCardById(Number(id));
-    if (temp != null) {
-      setCard(temp);
-    }
-  };
-
-  const handleNavigation = () => {
-    // router.replace(`/`);
+  const handleBackNavigation = () => {
     router.back();
-    // router.push(`/`);
   };
 
   const handleEdit = () => {
@@ -70,6 +58,15 @@ export default function EditScreen() {
     );
   };
 
+  const getCard = async () => {
+    const temp = await CardController.findCardById(Number(id));
+    if (temp != null) {
+      setCard(temp);
+    }
+  };
+
+  // Handle a click on a favorite button of an specific card
+  // Toogle favorite value
   const onFavoritePress = async () => {
     const card = await CardController.findCardById(Number(id));
     if (card) {
@@ -81,7 +78,6 @@ export default function EditScreen() {
 
   useFocusEffect(
     React.useCallback(() => {
-      // Code to update the screen data
       getCard();
     }, [])
   );
@@ -90,7 +86,7 @@ export default function EditScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: card?.color }]}>
       <GestureHandlerRootView>
         <View style={[styles.options, { backgroundColor: card?.color }]}>
-          <TouchableOpacity onPress={handleNavigation} style={styles.optionBtn}>
+          <TouchableOpacity onPress={handleBackNavigation} style={styles.optionBtn}>
             <Entypo name="chevron-thin-left" size={22} color="black" />
           </TouchableOpacity>
 
@@ -123,13 +119,7 @@ export default function EditScreen() {
           <View style={styles.scratchA}>
             <ScratchCard style={styles.scratchB} image={image}>
               <View style={styles.card}>
-                {/* <Image
-                  source={require("../../assets/images/favicon.png")}
-                  style={styles.imageCard}
-                /> */}
                 <Image source={{ uri: card?.image }} style={styles.imageCard} />
-                {/* <Text style={styles.titleText}>Cashback</Text>
-                <Text style={styles.subTitleText}>$10</Text> */}
               </View>
             </ScratchCard>
           </View>
@@ -159,7 +149,6 @@ const styles = StyleSheet.create({
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    // padding: 10,
   },
   imageCard: {
     height: "100%",

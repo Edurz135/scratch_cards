@@ -48,19 +48,21 @@ export const ScratchCard: React.FC<Props> = ({ style, children, image }) => {
 
     setPercentageScratched(percentage);
 
-    if(isScratched) return;
+    if (isScratched) return;
 
+    // Trigger vibration when scratched area is more than 40%
     if (percentage > 40) {
       setScratched(true);
-      Vibration.vibrate(); // Trigger vibration when scratched area is more than 50%
+      Vibration.vibrate();
     }
   };
 
+  // Reset the scrached area
   const resetScratchCard = () => {
-    path.current = Skia.Path.Make(); // Reset the path to an empty path
-    setScratched(false); // Reset the scratched state
-    setMove(false); // Reset the move state
-    setPercentageScratched(0); // Reset the percentage scratched
+    path.current = Skia.Path.Make();
+    setScratched(false);
+    setMove(false);
+    setPercentageScratched(0);
   };
 
   return (
@@ -101,15 +103,11 @@ export const ScratchCard: React.FC<Props> = ({ style, children, image }) => {
               }
             >
               {!isScratched && (
+                // Solid color as cover
                 <Rect x={0} y={0} width={width} height={height} color="black" />
-                // <Image
-                //   image={image}
-                //   fit="cover"
-                //   x={0}
-                //   y={0}
-                //   width={width}
-                //   height={height}
-                // />
+
+                // Image as cover
+                // <Image image={image} fit="cover" x={0} y={0} width={width} height={height} />
               )}
             </Mask>
           </Canvas>

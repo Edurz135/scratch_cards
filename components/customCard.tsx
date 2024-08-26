@@ -2,6 +2,7 @@ import { Text, Image, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import { Card } from "@/types"; // Import the Card interface
 import { useRouter } from "expo-router";
+import { getFormattedText, getRandomBorderStyle } from "@/utils";
 
 interface CardProps extends Card {
   onFavoritePress(id: number): void;
@@ -21,39 +22,6 @@ export function CustomCard({
 
   const router = useRouter();
 
-  const [rnd, setRnd] = useState<number>();
-
-  const generateRandomNumber = () => {
-    const max = 4;
-    const min = 1;
-    const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
-    setRnd(randomNumber);
-  };
-
-  const getRandomBorderStyle = () => {
-    switch (rnd) {
-      case 1:
-        return styles.border1;
-      case 2:
-        return styles.border2;
-      case 3:
-        return styles.border3;
-      case 4:
-        return styles.border4;
-      default:
-        return styles.allborder;
-    }
-  };
-
-  function getFormattedDescription(): string {
-    if (!description) return "";
-
-    if (description.length > 20) {
-      return description.substring(0, 20) + "...";
-    }
-    return description;
-  }
-
   const handleFavorite = async () => {
     onFavoritePress(id);
   };
@@ -61,10 +29,6 @@ export function CustomCard({
   const handleNavigation = () => {
     router.push(`/card/${id}`);
   };
-
-  useEffect(() => {
-    generateRandomNumber();
-  }, []);
 
   return (
     <TouchableOpacity
@@ -87,7 +51,7 @@ export function CustomCard({
         </TouchableOpacity>
       </View>
       {description ? (
-        <Text style={styles.description}>{getFormattedDescription()}</Text>
+        <Text style={styles.description}>{getFormattedText(description, 20)}</Text>
       ) : null}
 
       {emoji ? <Text style={styles.emoji}>{emoji}</Text> : null}
@@ -140,32 +104,5 @@ const styles = StyleSheet.create({
     display: "flex",
     padding: 18,
     paddingRight: 14,
-  },
-  border1: {
-    borderTopStartRadius: 0,
-    borderTopEndRadius: 60,
-    borderBottomStartRadius: 60,
-    borderBottomEndRadius: 60,
-  },
-  border2: {
-    borderTopStartRadius: 60,
-    borderTopEndRadius: 0,
-    borderBottomStartRadius: 60,
-    borderBottomEndRadius: 60,
-  },
-  border3: {
-    borderTopStartRadius: 60,
-    borderTopEndRadius: 60,
-    borderBottomStartRadius: 0,
-    borderBottomEndRadius: 60,
-  },
-  border4: {
-    borderTopStartRadius: 60,
-    borderTopEndRadius: 60,
-    borderBottomStartRadius: 60,
-    borderBottomEndRadius: 0,
-  },
-  allborder: {
-    borderRadius: 60,
   },
 });

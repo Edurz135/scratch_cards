@@ -12,10 +12,7 @@ import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
 
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
+export { ErrorBoundary } from "expo-router";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -57,16 +54,10 @@ function RootLayoutNav() {
         <Stack.Screen name="create" options={{ headerShown: false }} />
 
         {/* The dynamic card detail screen */}
-        <Stack.Screen
-          name="card/[id]"
-          options={{ headerShown: false }} // You can customize this as needed
-        />
-        
-        {/* The dynamic card detail screen */}
-        <Stack.Screen
-          name="edit/[id]"
-          options={{ headerShown: false }} // You can customize this as needed
-        />
+        <Stack.Screen name="card/[id]" options={{ headerShown: false }} />
+
+        {/* The dynamic card edit screen */}
+        <Stack.Screen name="edit/[id]" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );

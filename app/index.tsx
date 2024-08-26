@@ -7,21 +7,20 @@ import {
 } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { Card } from "@/types";
-import { CustomCard } from "@/components/customCard";
+import { CustomCard } from "@/components/CustomCard";
 import { CardController } from "@/services/cardController";
 import { useFocusEffect, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { CustomChip } from "@/components/CustomChip";
 
 export default function HomeScreen() {
   const [cards, setCards] = useState<Card[]>([]);
-  const [selectedOption, setSelectedOption] = useState<"all" | "favorites">(
-    "all"
-  );
+  const [selectedOption, setSelectedOption] = useState<string>("All");
 
   const router = useRouter();
 
   const filteredCards =
-    selectedOption === "favorites"
+    selectedOption === "Favorites"
       ? cards.filter((card) => card.favorite)
       : cards;
 
@@ -43,6 +42,10 @@ export default function HomeScreen() {
     router.push(`/create`);
   };
 
+  const handleChipClick = (value: string): void => {
+    setSelectedOption(value);
+  };
+
   useFocusEffect(
     useCallback(() => {
       loadCards();
@@ -60,67 +63,18 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.optionsContainer}>
-          {/* <View>
-            <View style={styles.option}>
-              <View style={styles.optionTitle}>
-                <Text
-                  style={{ fontSize: 20, fontFamily: "Numans", color: "white" }}
-                >
-                  All
-                </Text>
-              </View>
-              <View style={styles.optionQuantity}>
-                <Text style={{ fontSize: 12, color: "white" }}>10</Text>
-              </View>
-            </View>
-          </View>
-          <View>
-            <View style={styles.option}>
-              <View style={styles.optionTitle}>
-                <Text
-                  style={{ fontSize: 20, fontFamily: "Numans", color: "white" }}
-                >
-                  Favorites
-                </Text>
-              </View>
-              <View style={styles.optionQuantity}>
-                <Text style={{ fontSize: 12, color: "white" }}>3</Text>
-              </View>
-            </View>
-          </View> */}
-          <TouchableOpacity onPress={() => setSelectedOption("all")}>
-            <View
-              style={[
-                styles.option,
-                selectedOption === "all" && styles.selectedOption,
-              ]}
-            >
-              <View style={styles.optionTitle}>
-                <Text style={styles.optionText}>All</Text>
-              </View>
-              <View style={styles.optionQuantity}>
-                <Text style={styles.optionQuantityText}>{cards.length}</Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={() => setSelectedOption("favorites")}>
-            <View
-              style={[
-                styles.option,
-                selectedOption === "favorites" && styles.selectedOption,
-              ]}
-            >
-              <View style={styles.optionTitle}>
-                <Text style={styles.optionText}>Favorites</Text>
-              </View>
-              <View style={styles.optionQuantity}>
-                <Text style={styles.optionQuantityText}>
-                  {cards.filter((card) => card.favorite).length}
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
+          <CustomChip
+            onPress={handleChipClick}
+            title="All"
+            quantity={cards.length}
+            selectedOption={selectedOption}
+          />
+          <CustomChip
+            onPress={handleChipClick}
+            title="Favorites"
+            quantity={cards.filter((card) => card.favorite).length}
+            selectedOption={selectedOption}
+          />
         </View>
 
         <View style={styles.cardContainer}>
@@ -161,18 +115,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  optionText: {
-    fontSize: 20,
-    fontFamily: "Numans",
-    color: "white",
-  },
-  optionQuantityText: {
-    fontSize: 12,
-    color: "white",
-  },
-  selectedOption: {
-    opacity: 1,
-  },
   createBtnText: {
     fontSize: 20,
     fontFamily: "Numans",
@@ -224,38 +166,6 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     paddingTop: 40,
     gap: 10,
-  },
-  option: {
-    display: "flex",
-    flexDirection: "row",
-    borderWidth: 1,
-    borderStyle: "solid",
-    borderColor: "white",
-    opacity: 0.5,
-    borderRadius: 999,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-  },
-  optionTitle: {
-    color: "white",
-    fontSize: 20,
-    marginHorizontal: 10,
-    fontFamily: "Numans",
-    display: "flex",
-    justifyContent: "center",
-  },
-  optionQuantity: {
-    width: 35,
-    height: 35,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    backgroundColor: "#262626",
-    borderRadius: 999,
-    color: "white",
-    fontFamily: "Numans",
   },
   options: {
     height: 60,
